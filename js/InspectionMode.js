@@ -40,9 +40,7 @@ class InspectionMode {
         this.controls.maxDistance = 8;
         this.controls.target.set(0, 0, 0);
         this.controls.enabled = true;
-    }
-
-    setupInspectionLighting() {
+    }    setupInspectionLighting() {
         // Ambient light
         const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
         this.scene.add(ambientLight);
@@ -61,6 +59,68 @@ class InspectionMode {
         const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
         rimLight.position.set(0, 0, -5);
         this.scene.add(rimLight);
+
+        // Add reference grid and environment elements
+        this.addInspectionEnvironment();
+    }    addInspectionEnvironment() {
+        // Create subtle background reference planes (box effect)
+        this.addBackgroundPlanes();
+
+        // Add inspection platform/pedestal indicator
+        this.addInspectionPlatform();
+    }
+
+    addBackgroundPlanes() {
+        // Semi-transparent background planes for depth reference
+        const planeGeometry = new THREE.PlaneGeometry(8, 8);
+        const planeMaterial = new THREE.MeshLambertMaterial({
+            color: 0x333333,
+            transparent: true,
+            opacity: 0.1,
+            side: THREE.DoubleSide
+        });
+
+        // Back plane
+        const backPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        backPlane.position.z = -4;
+        this.scene.add(backPlane);
+
+        // Side planes
+        const leftPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        leftPlane.position.x = -4;
+        leftPlane.rotation.y = Math.PI / 2;
+        this.scene.add(leftPlane);
+
+        const rightPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        rightPlane.position.x = 4;
+        rightPlane.rotation.y = -Math.PI / 2;
+        this.scene.add(rightPlane);
+    }
+
+    addInspectionPlatform() {
+        // Create a subtle platform indicator to show where the artwork is positioned
+        const platformGeometry = new THREE.CylinderGeometry(1.5, 1.5, 0.05, 32);
+        const platformMaterial = new THREE.MeshLambertMaterial({
+            color: 0x555555,
+            transparent: true,
+            opacity: 0.3
+        });
+        const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+        platform.position.y = -1.98;
+        this.scene.add(platform);
+
+        // Add a subtle ring around the platform
+        const ringGeometry = new THREE.RingGeometry(1.5, 1.6, 32);
+        const ringMaterial = new THREE.MeshLambertMaterial({
+            color: 0x666666,
+            transparent: true,
+            opacity: 0.5,
+            side: THREE.DoubleSide
+        });
+        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+        ring.position.y = -1.97;
+        ring.rotation.x = -Math.PI / 2;
+        this.scene.add(ring);
     }
 
     createInspectionArtwork(originalArtwork) {
@@ -172,13 +232,22 @@ class InspectionMode {
         group.add(painting);    // Front artwork (most forward)
 
         return group;
-    }
-
-    createInspectionSculpture(originalArtwork) {
-        // Clone the sculpture and scale it up
+    }    createInspectionSculpture(originalArtwork) {
+        // Clone the sculpture and apply the scale from JSON data
         const sculpture = originalArtwork.clone();
         sculpture.position.set(0, 0, 0);
-        sculpture.scale.set(2, 2, 2);
+        
+        // Use the scale from the sculpture's userData if available
+        if (originalArtwork.userData && originalArtwork.userData.scale) {
+            const scale = originalArtwork.userData.scale;
+            sculpture.scale.set(scale.x, scale.y, scale.z);
+            console.log(`🔍 Inspection mode: Applied sculpture scale from JSON: ${scale.x}, ${scale.y}, ${scale.z}`);
+        } else {
+            // Fallback to default scale if no scale defined
+            sculpture.scale.set(2, 2, 2);
+            console.log(`🔍 Inspection mode: Using default sculpture scale: 2, 2, 2`);
+        }
+        
         return sculpture;
     }
 
