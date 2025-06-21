@@ -2,13 +2,13 @@
 class GalleryBuilder {
     constructor() {        // Initialize materials - will be updated with textures when available
         this.floorMaterial = new THREE.MeshLambertMaterial({
-            color: 0xffffff // Bright beige
+            color: 0xffffff 
         });
         this.wallMaterial = new THREE.MeshLambertMaterial({
-            color: 0xffffff // Bright white
+            color: 0xffffff 
         });
         this.ceilingMaterial = new THREE.MeshLambertMaterial({
-            color: 0xffffff // Bright beige
+            color: 0xffffff 
         });
 
         this.texturesLoaded = false;

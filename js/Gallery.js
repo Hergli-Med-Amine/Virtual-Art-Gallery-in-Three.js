@@ -103,8 +103,8 @@ class Gallery {
         this.scene.add(fillLight);
 
         // Spotlight for sculpture room
-        const spotLight = new THREE.SpotLight(0xffffff, 0);
-        spotLight.position.set(0, 8, -15);
+        const spotLight = new THREE.SpotLight(0xffffff, 0.5);
+        spotLight.position.set(0, 8, -30);
         spotLight.angle = Math.PI / 4;
         spotLight.penumbra = 0.1;
         spotLight.decay = 2;
