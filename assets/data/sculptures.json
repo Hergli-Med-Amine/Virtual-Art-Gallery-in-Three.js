@@ -1,0 +1,29 @@
+[
+    {
+        "type": "sculpture",
+        "title": "Forme Abstraite I",
+        "artist": "Artiste Contemporain",
+        "year": "2020",
+        "description": "Sculpture géométrique explorant les formes et les volumes dans l'espace.",
+        "position": { "x": -3, "y": 1, "z": -19 },
+        "color": "0x7f8c8d"
+    },
+    {
+        "type": "sculpture",
+        "title": "Équilibre",
+        "artist": "Sculpteur Moderne",
+        "year": "2019",
+        "description": "Œuvre minimaliste questionnant l'équilibre et la stabilité.",
+        "position": { "x": 3, "y": 1.5, "z": -23 },
+        "color": "0x34495e"
+    },
+    {
+        "type": "sculpture",
+        "title": "Harmonie",
+        "artist": "Créateur Visionnaire",
+        "year": "2021",
+        "description": "Composition géométrique évoquant l'harmonie des formes naturelles.",
+        "position": { "x": 0, "y": 1.2, "z": -21 },
+        "color": "0x9b59b6"
+    }
+]

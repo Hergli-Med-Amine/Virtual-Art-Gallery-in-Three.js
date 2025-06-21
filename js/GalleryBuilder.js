@@ -1,24 +1,77 @@
 // Gallery Builder class
 class GalleryBuilder {
     constructor() {
+        // Initialize materials - will be updated with textures when available
         this.floorMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0x2c2c2c,
-            transparent: true,
-            opacity: 0.8
+            color: 0x8B4513 // Dark brown fallback
         });
         
         this.wallMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0xf5f5f5,
-            transparent: true,
-            opacity: 0.95
+            color: 0xf5f5f5 // Light gray fallback
         });
         
         this.ceilingMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0x3c3c3c,
-            transparent: true,
-            opacity: 0.9
+            color: 0xffffff // White ceiling
         });
+        
+        this.texturesLoaded = false;
+        this.loadTextures();
     }
+
+    // Load textures for gallery surfaces
+    loadTextures() {
+        const textureLoader = new THREE.TextureLoader();
+        
+        // Load floor texture (wood)
+        textureLoader.load(
+            'assets/textures/wood_floor.jpg',
+            (texture) => {
+                console.log('✅ Floor texture loaded');
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(4, 4); // Repeat texture for tiling
+                this.floorMaterial.map = texture;
+                this.floorMaterial.needsUpdate = true;
+            },
+            undefined,
+            (error) => {
+                console.warn('⚠️ Floor texture not found, using fallback color');
+            }
+        );
+        
+        // Load wall texture
+        textureLoader.load(
+            'assets/textures/wall_texture.jpg',
+            (texture) => {
+                console.log('✅ Wall texture loaded');
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(2, 2);
+                this.wallMaterial.map = texture;
+                this.wallMaterial.needsUpdate = true;
+            },
+            undefined,
+            (error) => {
+                console.warn('⚠️ Wall texture not found, using fallback color');
+            }
+        );
+        
+        // Load ceiling texture (optional)
+        textureLoader.load(
+            'assets/textures/ceiling_texture.jpg',
+            (texture) => {
+                console.log('✅ Ceiling texture loaded');
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(2, 2);
+                this.ceilingMaterial.map = texture;
+                this.ceilingMaterial.needsUpdate = true;
+            },
+            undefined,
+            (error) => {
+                console.warn('⚠️ Ceiling texture not found, using fallback color');
+            }
+        );    }
 
     createFloors(scene) {
         // Hallway floor
@@ -79,28 +132,30 @@ class GalleryBuilder {
         
         // Left connection wall
         const leftConnectionWall = new THREE.Mesh(connectionWallGeometry, this.wallMaterial);
-        leftConnectionWall.rotation.y = -Math.PI / 2;
-        leftConnectionWall.position.set(-4, 2, -16);
+        leftConnectionWall.rotation.y = Math.PI; // 180 degrees
+        leftConnectionWall.position.set(-4, 2, -15);
         scene.add(leftConnectionWall);
 
         // Right connection wall
         const rightConnectionWall = new THREE.Mesh(connectionWallGeometry, this.wallMaterial);
-        rightConnectionWall.rotation.y = Math.PI / 2;
-        rightConnectionWall.position.set(4, 2, -16);
+        rightConnectionWall.rotation.y = 0 + Math.PI; // 180 degrees from previous (total Math.PI)
+        rightConnectionWall.position.set(4, 2, -15);
         scene.add(rightConnectionWall);
-    }
-
-    createCeilings(scene) {
+    }    createCeilings(scene) {
+        // Create double-sided ceiling material for visibility from both directions
+        const doubleSidedCeilingMaterial = this.ceilingMaterial.clone();
+        doubleSidedCeilingMaterial.side = THREE.DoubleSide;
+        
         // Hallway ceiling
         const hallwayCeilingGeometry = new THREE.PlaneGeometry(4, 20);
-        const hallawayCeiling = new THREE.Mesh(hallwayCeilingGeometry, this.ceilingMaterial);
+        const hallawayCeiling = new THREE.Mesh(hallwayCeilingGeometry, doubleSidedCeilingMaterial);
         hallawayCeiling.rotation.x = Math.PI / 2;
         hallawayCeiling.position.set(0, 4, -5);
         scene.add(hallawayCeiling);
 
         // Sculpture room ceiling
         const roomCeilingGeometry = new THREE.PlaneGeometry(12, 12);
-        const roomCeiling = new THREE.Mesh(roomCeilingGeometry, this.ceilingMaterial);
+        const roomCeiling = new THREE.Mesh(roomCeilingGeometry, doubleSidedCeilingMaterial);
         roomCeiling.rotation.x = Math.PI / 2;
         roomCeiling.position.set(0, 4, -21);
         scene.add(roomCeiling);

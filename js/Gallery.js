@@ -36,9 +36,7 @@ class Gallery {
         this.uiController = new UIController();                // User interface
 
         this.init();                                           // Start initialization
-    }
-
-    // ===== INITIALIZATION SEQUENCE =====
+    }    // ===== INITIALIZATION SEQUENCE =====
     // DON'T CHANGE: This calls all setup functions in correct order
     init() {
         this.setupScene();
@@ -50,7 +48,7 @@ class Gallery {
         this.setupEventListeners();
 
         this.createGalleryStructure();
-        this.loadArtworks();
+        // loadArtworks is now called separately as it's async
     }
 
     setupScene() {
@@ -84,15 +82,13 @@ class Gallery {
         this.controls = new THREE.PointerLockControls(this.camera, this.renderer.domElement);
         this.scene.add(this.controls.getObject());
         this.movementController.setControls(this.controls);
-    }
-
-    setupLighting() {
-        // Ambient light
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    }    setupLighting() {
+        // Brightened ambient light for better overall illumination
+        const ambientLight = new THREE.AmbientLight(0x404040, 1.2);
         this.scene.add(ambientLight);
 
-        // Directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        // Bright main directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
         directionalLight.position.set(5, 10, 5);
         directionalLight.castShadow = true;
         directionalLight.shadow.mapSize.width = 2048;
@@ -101,8 +97,13 @@ class Gallery {
         directionalLight.shadow.camera.far = 50;
         this.scene.add(directionalLight);
 
+        // Additional fill light from opposite direction
+        const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        fillLight.position.set(-5, 8, -5);
+        this.scene.add(fillLight);
+
         // Spotlight for sculpture room
-        const spotLight = new THREE.SpotLight(0xffffff, 0.8);
+        const spotLight = new THREE.SpotLight(0xffffff, 1.2);
         spotLight.position.set(0, 8, -15);
         spotLight.angle = Math.PI / 4;
         spotLight.penumbra = 0.1;
@@ -157,17 +158,13 @@ class Gallery {
         this.inspectionMode.onExit = () => {
             this.exitInspectionMode();
         };
-    }
-
-    createGalleryStructure() {
+    }    createGalleryStructure() {
         const galleryBuilder = new GalleryBuilder();
         galleryBuilder.createFloors(this.scene);
         galleryBuilder.createWalls(this.scene);
         galleryBuilder.createCeilings(this.scene);
-    }
-
-    loadArtworks() {
-        this.artworkLoader.loadArtworks(this.scene, this.loadingManager, (artworks) => {
+    }async loadArtworks() {
+        await this.artworkLoader.loadArtworks(this.scene, this.loadingManager, (artworks) => {
             this.artworks = artworks;
             console.log('Loaded artworks:', this.artworks.length); // DEBUG
             console.log('Artwork types:', this.artworks.map(a => a.userData?.type || 'no-type')); // DEBUG

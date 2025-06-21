@@ -1,102 +1,47 @@
 // ===== ARTWORK LOADER CLASS =====
 // This class manages all artwork data and creates 3D objects for paintings and sculptures
-// CUSTOMIZE: Add new artworks, change positions, scales, colors, and textures here
+// Data is now loaded from JSON files in /assets/data/
 class ArtworkLoader {
     constructor() {
-        // ===== PAINTINGS DATA =====
-        // CUSTOMIZE: Add/remove/modify paintings here
-        // Each painting needs: type, title, artist, year, description, imageUrl, position, rotation, scale
-        this.artworksData = [
-            {
-                type: 'painting',                              // DON'T CHANGE: Required for system to work
-                title: 'La Nuit Étoilée',                     // CUSTOMIZE: Display name
-                artist: 'Vincent van Gogh',                   // CUSTOMIZE: Artist name
-                year: '1889',                                  // CUSTOMIZE: Year as string
-                description: 'Cette œuvre emblématique de Van Gogh capture le mouvement du ciel nocturne avec des tourbillons expressifs et des couleurs vibrantes.', // CUSTOMIZE: Description text
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg', // CUSTOMIZE: Image URL or local path
-                position: { x: -1.9, y: 2, z: 2 },           // CUSTOMIZE: 3D position (x: left/right, y: up/down, z: forward/back)
-                rotation: { x: 0, y: Math.PI / 2, z: 0 },    // CUSTOMIZE: 3D rotation (y: main rotation for wall mounting)
-                scale: { x: 1.5, y: 1.2, z: 1 }             // CUSTOMIZE: Size (x: width, y: height, z: depth)
-            },            {
-                type: 'painting',                              // DON'T CHANGE: Required for system
-                title: 'La Joconde',                          // CUSTOMIZE: Mona Lisa
-                artist: 'Léonard de Vinci',                   // CUSTOMIZE: Leonardo da Vinci
-                year: '1503-1519',                             // CUSTOMIZE: Date range
-                description: 'Portrait de Lisa Gherardini, épouse de Francesco del Giocondo. Célèbre pour son sourire énigmatique et la technique du sfumato.',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/687px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg',
-                position: { x: 1.9, y: 2, z: 0 },            // CUSTOMIZE: Right wall position
-                rotation: { x: 0, y: -Math.PI / 2, z: 0 },   // CUSTOMIZE: Facing left (-PI/2)
-                scale: { x: 1.2, y: 1.6, z: 1 }             // CUSTOMIZE: Portrait proportions
-            },
-            {
-                type: 'painting',                              // DON'T CHANGE: Required for system
-                title: 'La Grande Vague',                     // CUSTOMIZE: The Great Wave
-                artist: 'Katsushika Hokusai',                 // CUSTOMIZE: Japanese artist
-                year: '1831',                                  // CUSTOMIZE: Publication year
-                description: 'Estampe japonaise représentant une vague géante menaçant des bateaux, avec le mont Fuji en arrière-plan.',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Great_Wave_off_Kanagawa.jpg/1280px-The_Great_Wave_off_Kanagawa.jpg',
-                position: { x: -1.9, y: 2, z: -2 },          // CUSTOMIZE: Left wall, further back
-                rotation: { x: 0, y: Math.PI / 2, z: 0 },    // CUSTOMIZE: Facing right (PI/2)
-                scale: { x: 2, y: 1.4, z: 1 }               // CUSTOMIZE: Wider landscape format
-            },
-            {
-                type: 'painting',                              // DON'T CHANGE: Required for system
-                title: 'Le Cri',                              // CUSTOMIZE: The Scream
-                artist: 'Edvard Munch',                       // CUSTOMIZE: Norwegian artist
-                year: '1893',                                  // CUSTOMIZE: Creation year
-                description: 'Œuvre expressionniste représentant une figure angoissée sur un pont, devenue icône de l\'anxiété moderne.',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg',
-                position: { x: 1.9, y: 2, z: -4 },           // CUSTOMIZE: Right wall, further back
-                rotation: { x: 0, y: -Math.PI / 2, z: 0 },   // CUSTOMIZE: Facing left
-                scale: { x: 1.2, y: 1.6, z: 1 }             // CUSTOMIZE: Portrait proportions
-            },
-            {
-                type: 'painting',                              // DON'T CHANGE: Required for system
-                title: 'Guernica',                            // CUSTOMIZE: Picasso's masterpiece
-                artist: 'Pablo Picasso',                      // CUSTOMIZE: Spanish artist
-                year: '1937',                                  // CUSTOMIZE: War painting
-                description: 'Peinture cubiste dénonçant les horreurs de la guerre, créée en réaction au bombardement de Guernica.',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/7/74/PicassoGuernica.jpg/1280px-PicassoGuernica.jpg',
-                position: { x: -1.9, y: 2, z: -6 },          // CUSTOMIZE: Left wall, furthest back
-                rotation: { x: 0, y: Math.PI / 2, z: 0 },    // CUSTOMIZE: Facing right
-                scale: { x: 2.5, y: 1.2, z: 1 }             // CUSTOMIZE: Very wide landscape format
-            }        ];
+        // Data will be loaded from JSON files
+        this.artworksData = [];
+        this.sculpturesData = [];
+    }
 
-        // ===== SCULPTURES DATA =====
-        // CUSTOMIZE: Add/remove/modify sculptures here
-        // Each sculpture needs: type, title, artist, year, description, position, color
-        this.sculpturesData = [
-            {
-                type: 'sculpture',                             // DON'T CHANGE: Required for system
-                title: 'Forme Abstraite I',                   // CUSTOMIZE: Display name
-                artist: 'Artiste Contemporain',               // CUSTOMIZE: Artist name
-                year: '2020',                                  // CUSTOMIZE: Creation year
-                description: 'Sculpture géométrique explorant les formes et les volumes dans l\'espace.',
-                position: { x: -3, y: 1, z: -19 },           // CUSTOMIZE: 3D position in sculpture room
-                color: 0x7f8c8d                               // CUSTOMIZE: Hex color (0x for hex notation)
-            },
-            {
-                type: 'sculpture',                             // DON'T CHANGE: Required for system
-                title: 'Équilibre',                           // CUSTOMIZE: Balance
-                artist: 'Sculpteur Moderne',                  // CUSTOMIZE: Modern Sculptor
-                year: '2019',                                  // CUSTOMIZE: Year
-                description: 'Œuvre minimaliste questionnant l\'équilibre et la stabilité.',
-                position: { x: 3, y: 1.5, z: -23 },          // CUSTOMIZE: Right side, higher position
-                color: 0x34495e                               // CUSTOMIZE: Dark blue-gray color
-            },
-            {
-                type: 'sculpture',                             // DON'T CHANGE: Required for system
-                title: 'Harmonie',                            // CUSTOMIZE: Harmony
-                artist: 'Créateur Visionnaire',               // CUSTOMIZE: Visionary Creator
-                year: '2021',                                  // CUSTOMIZE: Recent year
-                description: 'Composition géométrique évoquant l\'harmonie des formes naturelles.',
-                position: { x: 0, y: 1.2, z: -21 },          // CUSTOMIZE: Center position
-                color: 0x9b59b6                               // CUSTOMIZE: Purple color
-            }
-        ];    }    // ===== MAIN ARTWORK LOADING FUNCTION =====
-    // This function loads all artworks into the scene
-    // DON'T CHANGE: This handles the loading process and error handling
-    loadArtworks(scene, loadingManager, callback) {
+    // Load artwork data from JSON files
+    async loadArtworkData() {
+        try {
+            // Load paintings data
+            const paintingsResponse = await fetch('assets/data/paintings.json');
+            this.artworksData = await paintingsResponse.json();
+            
+            // Load sculptures data  
+            const sculpturesResponse = await fetch('assets/data/sculptures.json');
+            this.sculpturesData = await sculpturesResponse.json();
+            
+            // Convert color strings back to hex numbers for sculptures
+            this.sculpturesData.forEach(sculpture => {
+                if (typeof sculpture.color === 'string') {
+                    sculpture.color = parseInt(sculpture.color, 16);
+                }
+            });
+            
+            console.log('✅ Artwork data loaded from JSON files');
+            console.log(`📋 Loaded ${this.artworksData.length} paintings and ${this.sculpturesData.length} sculptures`);
+            
+        } catch (error) {
+            console.error('❌ Failed to load artwork data:', error);
+            // Fallback: use empty arrays, gallery will still load without artworks
+            this.artworksData = [];
+            this.sculpturesData = [];
+        }
+    }// ===== MAIN ARTWORK LOADING FUNCTION =====
+    // This function loads all artworks into the scene    // ===== MAIN ARTWORK LOADING FUNCTION =====
+    // This function loads artwork data from JSON and creates 3D objects
+    async loadArtworks(scene, loadingManager, callback) {
+        // First load the JSON data
+        await this.loadArtworkData();
+        
         const artworks = [];
         const textureLoader = new THREE.TextureLoader(loadingManager);
         
