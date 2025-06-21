@@ -111,7 +111,7 @@ class ArtworkLoader {
         const frameGeometry = new THREE.BoxGeometry(
             artworkData.scale.x + 0.1,                        // Frame width = painting width + 0.2
             artworkData.scale.y + 0.1,                        // Frame height = painting height + 0.2
-            0.05                                              // Frame depth (thickness)
+            0.02                                          // Frame depth (thickness)
         );
         const frameMaterial = new THREE.MeshLambertMaterial({ 
             color: 0xdac4aa                                   // CUSTOMIZE: Frame color (brown)
@@ -130,7 +130,7 @@ class ArtworkLoader {
             transparent: true                                   // Allow transparency if image has it
         });
         const painting = new THREE.Mesh(paintingGeometry, paintingMaterial);
-        painting.position.z = 0.06;                           // Position slightly in front of frame
+        painting.position.z = 0.03;                           // Position slightly in front of frame
           // ----- GROUP FRAME AND PAINTING TOGETHER -----
         const artworkGroup = new THREE.Group();
         artworkGroup.add(frame);                               // Add frame to group

@@ -98,12 +98,12 @@ class Gallery {
         this.scene.add(directionalLight);
 
         // Additional fill light from opposite direction
-        const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+        const fillLight = new THREE.DirectionalLight(0xffffff, 0);
         fillLight.position.set(-5, 8, -5);
         this.scene.add(fillLight);
 
         // Spotlight for sculpture room
-        const spotLight = new THREE.SpotLight(0xffffff, 1.2);
+        const spotLight = new THREE.SpotLight(0xffffff, 0);
         spotLight.position.set(0, 8, -15);
         spotLight.angle = Math.PI / 4;
         spotLight.penumbra = 0.1;

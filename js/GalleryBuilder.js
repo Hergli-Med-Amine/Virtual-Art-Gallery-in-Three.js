@@ -107,6 +107,12 @@ class GalleryBuilder {
         rightHallwayWall.position.set(2, 2, -5);
         scene.add(rightHallwayWall);
 
+        // Back wall of hallway
+        const backHallwayWall = new THREE.Mesh(hallwayWallGeometry, this.wallMaterial);
+        backHallwayWall.rotation.y = Math.PI ; // Face down
+        backHallwayWall.position.set(0, 2, 5);
+        scene.add(backHallwayWall);
+
         // Sculpture room walls
         const roomWallGeometry = new THREE.PlaneGeometry(12, 4);
 
