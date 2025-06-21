@@ -146,7 +146,7 @@
         "position": {
             "x": -1.9,
             "y": 2,
-            "z": -7
+            "z": -6
         },
         "rotation": {
             "x": 0,
@@ -169,7 +169,7 @@
         "position": {
             "x": 1.9,
             "y": 2,
-            "z": -7
+            "z": -6
         },
         "rotation": {
             "x": 0,
@@ -192,7 +192,7 @@
         "position": {
             "x": -1.9,
             "y": 2,
-            "z": -10
+            "z": -9
         },
         "rotation": {
             "x": 0,
@@ -204,8 +204,7 @@
             "y": 1.3,
             "z": 1
         }
-    },
-    {
+    },    {
         "type": "painting",
         "title": "Girl with a Pearl Earring",
         "artist": "Johannes Vermeer",
@@ -215,7 +214,7 @@
         "position": {
             "x": 1.9,
             "y": 2,
-            "z": -10
+            "z": -9
         },
         "rotation": {
             "x": 0,
@@ -225,6 +224,52 @@
         "scale": {
             "x": 1.4,
             "y": 1.6,
+            "z": 1
+        }
+    },
+    {
+        "type": "painting",
+        "title": "Water Lilies",
+        "artist": "Claude Monet",
+        "year": "1919",
+        "description": "Série impressionniste emblématique capturant la beauté des nénuphars dans le jardin aquatique de Monet à Giverny.",
+        "imageUrl": "assets/images/Water_Lilies_by_Claude_Monet.jpg",
+        "position": {
+            "x": -1.9,
+            "y": 2,
+            "z": -12
+        },
+        "rotation": {
+            "x": 0,
+            "y": 1.5707963267948966,
+            "z": 0
+        },
+        "scale": {
+            "x": 2.4,
+            "y": 1.5,
+            "z": 1
+        }
+    },
+    {
+        "type": "painting",
+        "title": "Number 1, 1950 (Lavender Mist)",
+        "artist": "Jackson Pollock",
+        "year": "1950",
+        "description": "Chef-d'œuvre de l'expressionnisme abstrait américain, créé par la technique du dripping de Pollock, révolutionnant l'art moderne.",
+        "imageUrl": "assets/images/Lavender_Mist.jpg",
+        "position": {
+            "x": 1.9,
+            "y": 2,
+            "z": -12
+        },
+        "rotation": {
+            "x": 0,
+            "y": -1.5707963267948966,
+            "z": 0
+        },
+        "scale": {
+            "x": 2.6,
+            "y": 1.8,
             "z": 1
         }
     }
