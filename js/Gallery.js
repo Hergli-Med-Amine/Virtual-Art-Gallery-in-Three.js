@@ -84,11 +84,11 @@ class Gallery {
         this.movementController.setControls(this.controls);
     }    setupLighting() {
         // Brightened ambient light for better overall illumination
-        const ambientLight = new THREE.AmbientLight(0x404040, 1.2);
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.2);
         this.scene.add(ambientLight);
 
         // Bright main directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
         directionalLight.position.set(5, 10, 5);
         directionalLight.castShadow = true;
         directionalLight.shadow.mapSize.width = 2048;
@@ -98,7 +98,7 @@ class Gallery {
         this.scene.add(directionalLight);
 
         // Additional fill light from opposite direction
-        const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
         fillLight.position.set(-5, 8, -5);
         this.scene.add(fillLight);
 
