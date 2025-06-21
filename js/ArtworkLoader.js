@@ -88,20 +88,150 @@ class ArtworkLoader {
             this.finishLoading(scene, artworks, callback);
         }
     }
-    
-    finishLoading(scene, artworks, callback) {
+      finishLoading(scene, artworks, callback) {
         // ===== LOAD SCULPTURES =====
-        // Sculptures don't need textures, just geometry and colors
+        // Sculptures can be either procedural or GLTF models
+        let sculpturesToLoad = this.sculpturesData.length;
+        let sculpturesLoaded = 0;
+        
+        if (sculpturesToLoad === 0) {
+            console.log(`🎨 All artworks loaded! Total: ${artworks.length}`);
+            callback(artworks);
+            return;
+        }
+        
         this.sculpturesData.forEach((sculptureData, index) => {
-            console.log(`Loading sculpture ${index + 1}:`, sculptureData.title); // DEBUG
-            const sculpture = this.createSculpture(sculptureData);
-            scene.add(sculpture.pedestal);                     // Add pedestal to scene
-            scene.add(sculpture.sculpture);                    // Add sculpture to scene
-            artworks.push(sculpture.sculpture);                // Only sculpture is clickable
+            console.log(`Loading sculpture ${index + 1}:`, sculptureData.title);
+            
+            if (sculptureData.modelUrl) {
+                // Load GLTF model
+                this.loadGLTFSculpture(sculptureData, scene, artworks, () => {
+                    sculpturesLoaded++;
+                    if (sculpturesLoaded === sculpturesToLoad) {
+                        console.log(`🎨 All artworks loaded! Total: ${artworks.length}`);
+                        callback(artworks);
+                    }
+                });
+            } else {
+                // Create procedural sculpture
+                const sculpture = this.createSculpture(sculptureData);
+                scene.add(sculpture.pedestal);
+                scene.add(sculpture.sculpture);
+                artworks.push(sculpture.sculpture);
+                
+                sculpturesLoaded++;
+                if (sculpturesLoaded === sculpturesToLoad) {
+                    console.log(`🎨 All artworks loaded! Total: ${artworks.length}`);
+                    callback(artworks);
+                }
+            }
         });
+    }
 
-        console.log(`🎨 All artworks loaded! Total: ${artworks.length}`); // DEBUG
-        callback(artworks);                                    // Return all artworks to gallery
+    // ===== GLTF SCULPTURE LOADING =====
+    // This loads 3D models from GLTF files
+    loadGLTFSculpture(sculptureData, scene, artworks, onComplete) {
+        // Check if GLTFLoader is available
+        if (typeof THREE.GLTFLoader === 'undefined') {
+            console.error('❌ GLTFLoader not available. Please include GLTFLoader in your HTML.');
+            // Fallback to procedural sculpture
+            const sculpture = this.createSculpture(sculptureData);
+            scene.add(sculpture.pedestal);
+            scene.add(sculpture.sculpture);
+            artworks.push(sculpture.sculpture);
+            onComplete();
+            return;
+        }
+        
+        const loader = new THREE.GLTFLoader();
+        
+        loader.load(
+            sculptureData.modelUrl,
+            (gltf) => {
+                console.log(`✅ GLTF loaded for: ${sculptureData.title}`);
+                
+                // Create pedestal
+                const pedestal = this.createPedestal(sculptureData);
+                scene.add(pedestal);
+                
+                // Process the loaded model
+                const model = gltf.scene;
+                
+                // Apply scale if specified
+                if (sculptureData.scale) {
+                    model.scale.set(
+                        sculptureData.scale.x,
+                        sculptureData.scale.y,
+                        sculptureData.scale.z
+                    );
+                }
+                
+                // Position the model
+                model.position.set(
+                    sculptureData.position.x,
+                    sculptureData.position.y,
+                    sculptureData.position.z
+                );
+                  // Enable shadows and apply white color
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        
+                        // Force white color for the sculpture
+                        if (sculptureData.color) {
+                            const color = typeof sculptureData.color === 'string' 
+                                ? parseInt(sculptureData.color, 16) 
+                                : sculptureData.color;
+                            
+                            // Replace the material with white
+                            child.material = new THREE.MeshLambertMaterial({
+                                color: color
+                            });
+                            
+                            console.log(`🎨 Applied white color to sculpture mesh: ${color.toString(16)}`);
+                        }
+                    }
+                });
+                
+                // Store metadata
+                model.userData = sculptureData;
+                
+                scene.add(model);
+                artworks.push(model);
+                onComplete();
+            },
+            (progress) => {
+                console.log(`Loading progress for ${sculptureData.title}:`, progress);
+            },
+            (error) => {
+                console.error(`❌ Error loading GLTF for ${sculptureData.title}:`, error);
+                // Fallback to procedural sculpture
+                const sculpture = this.createSculpture(sculptureData);
+                scene.add(sculpture.pedestal);
+                scene.add(sculpture.sculpture);
+                artworks.push(sculpture.sculpture);
+                onComplete();
+            }
+        );
+    }
+
+    // ===== PEDESTAL CREATION =====
+    // Separate pedestal creation for GLTF sculptures
+    createPedestal(sculptureData) {
+        const pedestalGeometry = new THREE.CylinderGeometry(0.8, 0.8, 0.3);
+        const pedestalMaterial = new THREE.MeshLambertMaterial({ color: 0x95a5a6 });
+        const pedestal = new THREE.Mesh(pedestalGeometry, pedestalMaterial);
+        
+        pedestal.position.set(
+            sculptureData.position.x,
+            0.15,
+            sculptureData.position.z
+        );
+        pedestal.castShadow = true;
+        pedestal.receiveShadow = true;
+        
+        return pedestal;
     }// ===== PAINTING CREATION WITH TEXTURE =====
     // This creates a framed painting with a loaded image texture
     // CUSTOMIZE: Modify frame appearance, painting positioning, materials here

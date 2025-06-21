@@ -9,7 +9,7 @@ class MovementController {
         };
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
-        this.moveSpeed = 40.0;
+        this.moveSpeed = 100.0;
         this.clock = new THREE.Clock();
         this.controls = null;
     }
