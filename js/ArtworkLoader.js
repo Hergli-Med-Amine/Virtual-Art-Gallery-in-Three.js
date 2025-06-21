@@ -109,12 +109,12 @@ class ArtworkLoader {
         // ----- CREATE FRAME -----
         // CUSTOMIZE: Change frame dimensions, color, material here
         const frameGeometry = new THREE.BoxGeometry(
-            artworkData.scale.x + 0.2,                        // Frame width = painting width + 0.2
-            artworkData.scale.y + 0.2,                        // Frame height = painting height + 0.2
-            0.1                                                // Frame depth (thickness)
+            artworkData.scale.x + 0.1,                        // Frame width = painting width + 0.2
+            artworkData.scale.y + 0.1,                        // Frame height = painting height + 0.2
+            0.05                                              // Frame depth (thickness)
         );
         const frameMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0x8B4513                                    // CUSTOMIZE: Frame color (brown)
+            color: 0xdac4aa                                   // CUSTOMIZE: Frame color (brown)
         });
         const frame = new THREE.Mesh(frameGeometry, frameMaterial);
         frame.userData = { isFrame: true };                    // REVERTED: Mark frame for identification
