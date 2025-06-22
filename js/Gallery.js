@@ -82,35 +82,118 @@ class Gallery {
         this.controls = new THREE.PointerLockControls(this.camera, this.renderer.domElement);
         this.scene.add(this.controls.getObject());
         this.movementController.setControls(this.controls);
-    }    setupLighting() {
+    }    
+    
+    setupLighting() {
         // Brightened ambient light for better overall illumination
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        const ambientLight = new THREE.AmbientLight(0x404040, 0);
         this.scene.add(ambientLight);
 
         // Bright main directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        directionalLight.position.set(5, 10, 5);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 2048;
-        directionalLight.shadow.mapSize.height = 2048;
-        directionalLight.shadow.camera.near = 0.5;
-        directionalLight.shadow.camera.far = 50;
-        this.scene.add(directionalLight);
+        // const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        // directionalLight.position.set(-5, 2, 5);
+        // directionalLight.castShadow = true;
+        // directionalLight.shadow.mapSize.width = 2048;
+        // directionalLight.shadow.mapSize.height = 2048;
+        // directionalLight.shadow.camera.near = 0.5;
+        // directionalLight.shadow.camera.far = 50;
+        // this.scene.add(directionalLight);
 
-        // Additional fill light from opposite direction
-        const fillLight = new THREE.DirectionalLight(0xffffff, 0);
-        fillLight.position.set(-5, 8, -5);
-        this.scene.add(fillLight);
+        // const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+        // directionalLight2.position.set(0, 0, 0);
+        // // Make the light point upward (positive Y axis)
+        // directionalLight2.target.position.set(5, 1, -5);
+        // this.scene.add(directionalLight2.target);
+        // directionalLight2.castShadow = true;
+        // directionalLight2.shadow.mapSize.width = 0;
+        // directionalLight2.shadow.mapSize.height = 0;
+        // directionalLight2.shadow.camera.near = 0;
+        // directionalLight2.shadow.camera.far = 0;
+        // this.scene.add(directionalLight2);
+
+        // Create multiple point lights for better coverage
+        for (let i = 0; i < 4; i++) {
+            const pointLight = new THREE.PointLight(0xffffff, 0.4, 50);
+            pointLight.position.set(0, 3.7, i * 4 - 10); // Spread lights along Z axis
+            pointLight.castShadow = false;
+            pointLight.shadow.mapSize.width = 512;
+            pointLight.shadow.mapSize.height = 512;
+            pointLight.shadow.camera.near = 0.5;
+            pointLight.shadow.camera.far = 0;
+            this.scene.add(pointLight);
+
+            // Add a visible indicator (arrow helper) at the light's position
+            const arrowDir = new THREE.Vector3(0, -1, 0); // Pointing down
+            const arrowLength = 0.5;
+            const arrowColor = 0xff0000;
+            const arrowHelper = new THREE.ArrowHelper(
+            arrowDir,
+            pointLight.position,
+            arrowLength,
+            arrowColor
+            );
+            this.scene.add(arrowHelper);
+
+            // Optionally, add a small sphere to mark the exact point
+            const sphereGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            sphere.position.copy(pointLight.position);
+            this.scene.add(sphere);
+        }
+
+        // Arrange 4 point lights in a 2x2 grid along X and Z axes
+        const gridRows = 2;
+        const gridCols = 2;
+        const spacingX = 6; // Distance between lights along X
+        const spacingZ = 6; // Distance between lights along Z
+        const startX = -((gridCols - 1) * spacingX) / 2;
+        const startZ = -((gridRows - 1) * spacingZ) / 2;
+
+        for (let row = 0; row < gridRows; row++) {
+            for (let col = 0; col < gridCols; col++) {
+            const x = startX + col * spacingX;
+            const z = startZ + row * spacingZ;
+            const pointLight = new THREE.PointLight(0xffffff, 0.4, 0);
+            pointLight.position.set(x, 3.7, z-21);
+            pointLight.castShadow = false;
+            pointLight.shadow.mapSize.width = 0;
+            pointLight.shadow.mapSize.height = 0;
+            pointLight.shadow.camera.near = 0.5;
+            pointLight.shadow.camera.far = 50;
+            this.scene.add(pointLight);
+
+            // Add a visible indicator (arrow helper) at the light's position
+            const arrowDir = new THREE.Vector3(0, -1, 0); // Pointing down
+            const arrowLength = 0.5;
+            const arrowColor = 0xff0000;
+            const arrowHelper = new THREE.ArrowHelper(
+                arrowDir,
+                pointLight.position,
+                arrowLength,
+                arrowColor
+            );
+            this.scene.add(arrowHelper);
+
+            // Optionally, add a small sphere to mark the exact point
+            const sphereGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            sphere.position.copy(pointLight.position);
+            this.scene.add(sphere);
+            }
+        }
+
 
         // Spotlight for sculpture room
-        const spotLight = new THREE.SpotLight(0xffffff, 0.5);
-        spotLight.position.set(0, 8, 30);
-        spotLight.angle = Math.PI  / 4;
-        spotLight.penumbra = 0.1;
-        spotLight.decay = 2;
-        spotLight.distance = 200;
-        spotLight.castShadow = true;
-        this.scene.add(spotLight);
+        // const spotLight = new THREE.SpotLight(0xffffff, 0.5);
+        // spotLight.position.set(0, 8, 30);
+        // spotLight.angle = Math.PI  / 4;
+        // spotLight.penumbra = 0.1;
+        // spotLight.decay = 2;
+        // spotLight.distance = 200;
+        // spotLight.castShadow = true;
+        // this.scene.add(spotLight);
     }
 
     setupLoadingManager() {

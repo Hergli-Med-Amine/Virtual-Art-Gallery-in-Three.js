@@ -8,7 +8,8 @@ class GalleryBuilder {
             color: 0xffffff 
         });
         this.ceilingMaterial = new THREE.MeshLambertMaterial({
-            color: 0xffffff 
+            color: 0xffffff,
+            
         });
 
         this.texturesLoaded = false;
