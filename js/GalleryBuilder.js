@@ -9,7 +9,7 @@ class GalleryBuilder {
         });        this.ceilingMaterial = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             emissive: 0xffffff,
-            emissiveIntensity: 0.5
+            emissiveIntensity: 0.7
         });
 
         this.texturesLoaded = false;
@@ -26,7 +26,7 @@ class GalleryBuilder {
                 console.log('✅ Floor texture loaded');
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
-                texture.repeat.set(4, 4); // Repeat texture for tiling
+                texture.repeat.set(8, 1); // Repeat texture for tiling
                 this.floorMaterial.map = texture;
                 this.floorMaterial.needsUpdate = true;
             },
@@ -37,12 +37,12 @@ class GalleryBuilder {
         );
         // Load wall texture
         textureLoader.load(
-            'assets/textures/wall_texture.jpg',
+            'assets/textures/wall_texture1.jpg',
             (texture) => {
                 console.log('✅ Wall texture loaded');
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
-                texture.repeat.set(2, 2);
+                texture.repeat.set(10, 1);
                 this.wallMaterial.map = texture;
                 this.wallMaterial.needsUpdate = true;
             },

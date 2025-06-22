@@ -66,8 +66,8 @@ class Gallery {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setClearColor(0x1a1a1a);
-    }
-
+    }    
+    
     setupCamera() {
         this.camera = new THREE.PerspectiveCamera(
             75,
@@ -75,7 +75,8 @@ class Gallery {
             0.1,
             1000
         );
-        this.camera.position.set(0, 1.6, 8);
+        // Start in the center of the long hallway (centered at z = -11)
+        this.camera.position.set(0, 1.6, -11);
     }
 
     setupControls() {
@@ -83,117 +84,59 @@ class Gallery {
         this.scene.add(this.controls.getObject());
         this.movementController.setControls(this.controls);
     }    
-    
-    setupLighting() {
+      setupLighting() {
         // Brightened ambient light for better overall illumination
-        const ambientLight = new THREE.AmbientLight(0x404040, 0);
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.2);
         this.scene.add(ambientLight);
 
-        // Bright main directional light
-        // const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        // directionalLight.position.set(-5, 2, 5);
-        // directionalLight.castShadow = true;
-        // directionalLight.shadow.mapSize.width = 2048;
-        // directionalLight.shadow.mapSize.height = 2048;
-        // directionalLight.shadow.camera.near = 0.5;
-        // directionalLight.shadow.camera.far = 50;
-        // this.scene.add(directionalLight);
+        // Create a 2-column grid of point lights for the long hallway
+        // Hallway dimensions: 12 wide x 32 long, centered at z = -11
+        const gridRows = 5; // 8 rows along the length (32 units / 4 = 8)
+        const gridCols = 2; // 2 columns across the width 
+        const spacingX = 6; // 6 units between lights along X 
+        const spacingZ = 6; // 6 units between lights along Z 
+        
+        // Calculate starting positions to center the grid
+        const startX = -((gridCols - 1) * spacingX) / 2; // Center on X axis: -2, +2
+        const startZ = 5 - ((gridRows - 1) * spacingZ) / 2; // Start from entrance: z = 5 to z = -27
 
-        // const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
-        // directionalLight2.position.set(0, 0, 0);
-        // // Make the light point upward (positive Y axis)
-        // directionalLight2.target.position.set(5, 1, -5);
-        // this.scene.add(directionalLight2.target);
-        // directionalLight2.castShadow = true;
-        // directionalLight2.shadow.mapSize.width = 0;
-        // directionalLight2.shadow.mapSize.height = 0;
-        // directionalLight2.shadow.camera.near = 0;
-        // directionalLight2.shadow.camera.far = 0;
-        // this.scene.add(directionalLight2);
-
-        // Create multiple point lights for better coverage
-        for (let i = 0; i < 4; i++) {
-            const pointLight = new THREE.PointLight(0xffffff, 0.4, 50);
-            pointLight.position.set(0, 4, i * 4 - 10); // Spread lights along Z axis
-            pointLight.castShadow = false;
-            pointLight.shadow.mapSize.width = 512;
-            pointLight.shadow.mapSize.height = 512;
-            pointLight.shadow.camera.near = 0.5;
-            pointLight.shadow.camera.far = 0;
-            this.scene.add(pointLight);
-
-            // Add a visible indicator (arrow helper) at the light's position
-            const arrowDir = new THREE.Vector3(0, -1, 0); // Pointing down
-            const arrowLength = 0.5;
-            const arrowColor = 0xff0000;
-            const arrowHelper = new THREE.ArrowHelper(
-            arrowDir,
-            pointLight.position,
-            arrowLength,
-            arrowColor
-            );
-            this.scene.add(arrowHelper);
-
-            // Optionally, add a small sphere to mark the exact point
-            const sphereGeometry = new THREE.SphereGeometry(0.08, 16, 16);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-            sphere.position.copy(pointLight.position);
-            this.scene.add(sphere);
-        }
-
-        // Arrange 4 point lights in a 2x2 grid along X and Z axes
-        const gridRows = 2;
-        const gridCols = 2;
-        const spacingX = 6; // Distance between lights along X
-        const spacingZ = 6; // Distance between lights along Z
-        const startX = -((gridCols - 1) * spacingX) / 2;
-        const startZ = -((gridRows - 1) * spacingZ) / 2;
+        console.log(`🔧 Creating ${gridRows}x${gridCols} light grid for long hallway`);
+        console.log(`🔧 Grid starts at X: ${startX}, Z: ${startZ}`);
 
         for (let row = 0; row < gridRows; row++) {
             for (let col = 0; col < gridCols; col++) {
-            const x = startX + col * spacingX;
-            const z = startZ + row * spacingZ;
-            const pointLight = new THREE.PointLight(0xffffff, 0.4, 0);
-            pointLight.position.set(x, 4, z-21);
-            pointLight.castShadow = false;
-            pointLight.shadow.mapSize.width = 0;
-            pointLight.shadow.mapSize.height = 0;
-            pointLight.shadow.camera.near = 0.5;
-            pointLight.shadow.camera.far = 50;
-            this.scene.add(pointLight);
+                const x = startX + col * spacingX;
+                const z = startZ - row * spacingZ; // Subtract to go towards back of hallway
+                
+                const pointLight = new THREE.PointLight(0xffffff, 0.3, 50);
+                pointLight.position.set(x, 4, z+8);
+                pointLight.castShadow = false;
+                this.scene.add(pointLight);
 
-            // Add a visible indicator (arrow helper) at the light's position
-            const arrowDir = new THREE.Vector3(0, -1, 0); // Pointing down
-            const arrowLength = 0.5;
-            const arrowColor = 0xff0000;
-            const arrowHelper = new THREE.ArrowHelper(
-                arrowDir,
-                pointLight.position,
-                arrowLength,
-                arrowColor
-            );
-            this.scene.add(arrowHelper);
+                // Add visual indicators
+                // const arrowDir = new THREE.Vector3(0, -1, 0);
+                // const arrowLength = 0.5;
+                // const arrowColor = 0xff0000;
+                // const arrowHelper = new THREE.ArrowHelper(
+                //     arrowDir,
+                //     pointLight.position,
+                //     arrowLength,
+                //     arrowColor
+                // );
+                // this.scene.add(arrowHelper);
 
-            // Optionally, add a small sphere to mark the exact point
-            const sphereGeometry = new THREE.SphereGeometry(0.08, 16, 16);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-            sphere.position.copy(pointLight.position);
-            this.scene.add(sphere);
+                // // Add small sphere markers
+                // const sphereGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+                // const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                // const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                // sphere.position.copy(pointLight.position);
+                // this.scene.add(sphere);
+                
+                // console.log(`💡 Light ${row * gridCols + col + 1}/${gridRows * gridCols} at (${x}, 4, ${z})`);
             }
         }
 
-
-        // Spotlight for sculpture room
-        // const spotLight = new THREE.SpotLight(0xffffff, 0.5);
-        // spotLight.position.set(0, 8, 30);
-        // spotLight.angle = Math.PI  / 4;
-        // spotLight.penumbra = 0.1;
-        // spotLight.decay = 2;
-        // spotLight.distance = 200;
-        // spotLight.castShadow = true;
-        // this.scene.add(spotLight);
+        console.log(`✅ Created long hallway lighting grid with ${gridRows * gridCols} lights`);
     }
 
     setupLoadingManager() {

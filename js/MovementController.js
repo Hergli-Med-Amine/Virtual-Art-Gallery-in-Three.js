@@ -93,22 +93,16 @@ class MovementController {
             // Boundary limits to keep player in the gallery
             this.applyBoundaries();
         }
-    }
-
-    applyBoundaries() {
+    }    applyBoundaries() {
         const position = this.controls.getObject().position;
         
-        // Hallway boundaries
-        if (position.z > 5) position.z = 5; // Don't go behind start
-        if (position.z > -15) {
-            // In hallway - restrict x movement
-            if (position.x > 1.5) position.x = 1.5;
-            if (position.x < -1.5) position.x = -1.5;
-        } else {
-            // In sculpture room - wider x boundaries
-            if (position.x > 5.5) position.x = 5.5;
-            if (position.x < -5.5) position.x = -5.5;
-            if (position.z < -26.5) position.z = -26.5; // Don't go through back wall
-        }
+        // Long hallway boundaries - 12 wide x 32 long, centered at z = -11
+        // X boundaries (width): 12 units wide, so -6 to +6 with small buffer
+        if (position.x > 5.5) position.x = 5.5;   // Right wall
+        if (position.x < -5.5) position.x = -5.5; // Left wall
+        
+        // Z boundaries (length): From z = 5 to z = -27 with buffer
+        if (position.z > 4.5) position.z = 4.5;     // Don't go past entrance
+        if (position.z < -26.5) position.z = -26.5; // Don't go through back wall
     }
 }
