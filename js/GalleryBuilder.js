@@ -6,10 +6,10 @@ class GalleryBuilder {
         });
         this.wallMaterial = new THREE.MeshLambertMaterial({
             color: 0xffffff 
-        });
-        this.ceilingMaterial = new THREE.MeshLambertMaterial({
-            color: 0xffffff,
-            
+        });        this.ceilingMaterial = new THREE.MeshLambertMaterial({
+            color: 0xf5f5dc,
+            emissive: 0xf5f5dc,
+            emissiveIntensity: 1
         });
 
         this.texturesLoaded = false;
@@ -152,7 +152,6 @@ class GalleryBuilder {
 
     createCeilings(scene) {
         // Use the bright beige ceiling material
-        this.ceilingMaterial.side = THREE.DoubleSide; // Make double-sided
 
         // Hallway ceiling
         const hallwayCeilingGeometry = new THREE.PlaneGeometry(4, 20);

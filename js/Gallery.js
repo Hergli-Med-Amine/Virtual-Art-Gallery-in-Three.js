@@ -114,7 +114,7 @@ class Gallery {
         // Create multiple point lights for better coverage
         for (let i = 0; i < 4; i++) {
             const pointLight = new THREE.PointLight(0xffffff, 0.4, 50);
-            pointLight.position.set(0, 3.7, i * 4 - 10); // Spread lights along Z axis
+            pointLight.position.set(0, 4, i * 4 - 10); // Spread lights along Z axis
             pointLight.castShadow = false;
             pointLight.shadow.mapSize.width = 512;
             pointLight.shadow.mapSize.height = 512;
@@ -155,7 +155,7 @@ class Gallery {
             const x = startX + col * spacingX;
             const z = startZ + row * spacingZ;
             const pointLight = new THREE.PointLight(0xffffff, 0.4, 0);
-            pointLight.position.set(x, 3.7, z-21);
+            pointLight.position.set(x, 4, z-21);
             pointLight.castShadow = false;
             pointLight.shadow.mapSize.width = 0;
             pointLight.shadow.mapSize.height = 0;
